@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\StudentEmployment;
 use App\Models\StudentNeeds;
 use App\Models\StudentProfile;
+use App\Models\MentorProfile;
 use App\Models\User;
 //use DB;
 
@@ -46,7 +47,7 @@ class FormController extends Controller
                     'student_id' => $user_id,
                 ]);
 
-                User::where(['id'=>$user_id])->update(['auth_statuses_id'=>3]);
+                User::where(['id'=>$user_id])->update(['auth_statuses_id'=>4]);
                 $us =  User::where(['id' => $user_id])->first();
 
                 $response = [
@@ -101,7 +102,7 @@ class FormController extends Controller
                     'interviews' => $request->interviews
                 ]);
 
-                User::where(['id'=>$user_id])->update(['auth_statuses_id'=>2]);
+                User::where(['id'=>$user_id])->update(['auth_statuses_id'=>3]);
 
                 $us =  User::where(['id' => $user_id])->first();
 
@@ -157,7 +158,7 @@ class FormController extends Controller
                     'contact' => $request->contact
                 ]);
 
-                User::where(['id'=>$user_id])->update(['auth_statuses_id'=>1]);
+                User::where(['id'=>$user_id])->update(['auth_statuses_id'=>2]);
                 $us =  User::where(['id' => $user_id])->first();
 
                 $response = [
@@ -177,5 +178,60 @@ class FormController extends Controller
                 return response()->json($response, 200);
             }
         }
-    }    
+    } 
+    
+    public function mentorProfileForm(Request $request){
+
+        $fields = Validator::make($request->all(),[
+            'sex' => 'required|string',
+            'skills' => 'required|string'
+        ]);
+
+        if($fields->fails()){
+            $response = [
+                'success' => false,
+                'message' => 'varidation failed',
+                'errors' => $fields->errors()
+            ];
+            return response()->json($response, 200);
+    
+        }else{
+
+            $user_id = auth::user()->id;
+            try {
+                MentorProfile::create([
+                    'age' => $request->age,
+                    'sex' => $request->sex,
+                    'experience' => $request->experience,
+                    'education_level' => $request->education_level,
+                    'expertise' => $request->expertise,
+                    'interest' => $request->interest,
+                    'mentees' => $request->mentees,
+                    'time' => $request->time,
+                    'skills' => $request->skills,
+                    'mentor_id' => $user_id,
+                    'contact' => $request->contact
+                ]);
+
+                User::where(['id'=>$user_id])->update(['auth_statuses_id'=>4]);
+                $us =  User::where(['id' => $user_id])->first();
+
+                $response = [
+                    'success' => true,
+                    'message' => 'Successful Submited',
+                    'user' => $us
+                ];
+                return response()->json($response, 200);
+
+            } catch (\Throwable $th) {
+
+                $response = [
+                    'success' => false,
+                    'message' => 'failured to Send Data',
+                    'errors' => $th
+                ];
+                return response()->json($response, 200);
+            }
+        }
+    } 
 }

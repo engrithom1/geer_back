@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FCommentController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\audioController;
 use App\Http\Controllers\FormController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\studentController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\NewsController;
 use App\Http\Controllers\FurumController;
 use App\Http\Controllers\notesController;
 use App\Http\Controllers\intakeController;
+use App\Http\Controllers\mentorController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,7 +37,7 @@ Route::get('/clear', function() {
     return "Cleared!";
  
 });
-/////ADMIN URL
+/////ADMIN URL 
 Route::get('/admin-get-groups',[groupController::class,'adminGetGroups']);
 Route::get('/admin-get-intakes',[intakeController::class,'adminGetIntakes']);
 Route::post('/admin-student-details',[studentController::class,'getStudentDetailed']);
@@ -60,6 +62,8 @@ Route::get('/get-admin-groups',[groupController::class,'getAdminGroups']);
 Route::get('/get-news',[NewsController::class,'getNews']);
 Route::get('/get-exp-news',[NewsController::class,'getExpNews']);
 
+/////audios
+Route::get('/get-admin-audios',[audioController::class,'getAdminAudios']);
 
 ////forum
 Route::get('/get-top-post',[FurumController::class,'getTopPost']);
@@ -69,12 +73,17 @@ Route::get('/get-inactive-post',[FurumController::class,'getInactivePost']);
 ////groups
 Route::get('/get-intakes',[intakeController::class,'getIntakes']);
 
-/////notes aka books
+/////notes aka books getAllMentors()
 Route::get('/get-admin-books',[notesController::class,'getAdminGroups']);
 
+/////miyayushoo aka mentor
+Route::get('/get-all-mentors',[mentorController::class,'getAllMentors']);
 ////router secured
 Route::group(['middleware' => ['auth:sanctum']], function () {
     ////Auth issues
+
+    /////miyayushoo aka mentor
+    Route::post('/approve-mentor',[mentorController::class,'mentorApprove']);
     
     Route::post('/verify',[AuthController::class,'verifyPhone']);
     Route::post('/logout',[AuthController::class,'logout']);
@@ -106,10 +115,15 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/delete-news',[NewsController::class,'deleteNews']);
     Route::post('/update-news',[NewsController::class,'updateNews']);
 
-    ///student form
+    ///student and mentor form 
     Route::post('/student-needs-form',[FormController::class,'studentNeeds']);
+    Route::post('/mentor-profile-form',[FormController::class,'mentorProfileForm']);
     Route::post('/student-profile-form',[FormController::class,'studentProfile']);
     Route::post('/student-employment-form',[FormController::class,'studentEmployment']);
+
+    ///audio /update-audio-post
+    Route::post('/create-audio-post',[audioController::class,'createAudioPost']);
+    Route::post('/update-audio-post',[audioController::class,'updateAudioPost']);
 
 
 

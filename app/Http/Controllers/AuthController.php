@@ -271,10 +271,13 @@ class AuthController extends Controller
                 ];
                 User::where(['id'=>$user_id])->update($data);
 
+                $us =  User::select('id','name','avatar','auth_statuses_id','phone')
+                       ->where(['id' => $user_id])->first();
+
                 $response = [
                     'success' => true,
                     'message' => "Succesfull Verified",
-                    'dataz' => ['auth_statuses_id' => 1]
+                    'user' => $us
                 ];
                 return response()->json($response, 200);
             }else{
